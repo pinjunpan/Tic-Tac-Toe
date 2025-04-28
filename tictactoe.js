@@ -52,3 +52,48 @@ function getMostValuablePosition() {
   // 隨機下一個位置
   return emptyPositions[Math.floor(Math.random() * emptyPositions.length)]
 }
+
+// 顯示 O 或 X
+function draw(position, shape) {
+  // 限定形狀只能傳入 "circle" 或 "cross"
+  if (shape !== 'circle' && shape !== 'cross'){
+    throw 'Error: Unknown drawing shape, must be one of: circle, cross'
+  }
+
+  const cell = document.querySelector(`#app table tr td[data-index='${position}']`)
+  cell.innerHTML = `<div class='${shape}'></div>`
+}
+
+// 計算 row & column 位置
+function row(number) {
+  return [3 * (number - 1) + 1, 3 * (number - 1) + 2, 3 * (number - 1) + 3]
+}
+
+function column(number) {
+  return [number, number + 3, number + 6]
+}
+
+// 獲勝的八條連線
+const checkingLines = [
+  row(1),
+  row(2),
+  row(3),
+  column(1),
+  column(2),
+  column(3),
+  [1, 5, 9],
+  [3, 5, 7],
+]
+
+// 判斷此位置陣列是否包含勝利連線
+// 使用 Array.every()
+function isPlayerWin(checkingPositions) {
+  for (const line of checkingLines) {
+    if (line.every(position => checkingPositions.includes(position))) {
+      return true
+    }
+  }
+
+  return false
+}
+
