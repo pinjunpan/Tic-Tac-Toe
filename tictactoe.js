@@ -1,6 +1,9 @@
 const circlePositions = []
 const crossPositions = []
 
+let clickingThrottle = false // 防止電腦尚未下棋，玩家又點其他格子
+let gameoverFlag = false //判斷遊戲結束
+
 // 取得目前棋盤上的空格
 function getEmptyPositions() {  
   const allPositions = [1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -53,6 +56,13 @@ function getMostValuablePosition() {
   return emptyPositions[Math.floor(Math.random() * emptyPositions.length)]
 }
 
+function computerMove() {
+  const drawingPosition = getMostValuablePosition()
+  draw(drawingPosition, 'cross')
+  crossPositions.push(drawingPosition)
+  checkWinningCondition('cross')
+}
+
 // 顯示 O 或 X
 function draw(position, shape) {
   // 限定形狀只能傳入 "circle" 或 "cross"
@@ -97,3 +107,54 @@ function isPlayerWin(checkingPositions) {
   return false
 }
 
+function onCellClicked(event) {
+  if (clickingThrottle) return
+
+  const position = Number(event.target.dataset.index)
+  if (!position) return
+
+  draw(position, 'circle')
+  circlePositions.push(position)
+  clickingThrottle = true
+
+  // 設計 0.5 秒的等待時間
+  setTimeout(() => {
+    checkWinningCondition('circle')
+
+    if (!gameoverFlag) {
+      computerMove()
+    }
+  }, 500)
+}
+
+// 判斷結果
+function checkWinningCondition(player) {
+  // 取得要判斷的玩家的位置陣列
+  let position = circlePositions
+  if (player === 'cross') {
+    position = crossPositions
+  }
+
+  if (isPlayerWin(position)) {
+    gameoverFlag = true
+    removeClickListeners()
+
+    return alert(`${player} player won!`)
+  }
+
+  if (getEmptyPositions().length === 0){
+    gameoverFlag = true
+
+    return alert('Tied!')
+  }
+
+  // 等待電腦下完，玩家才能下棋
+  clickingThrottle = false
+}
+
+// 將綁定在 td 上面的監聽器移除，取消點擊行為
+function removeClickListeners() {
+  document.querySelectorAll('#app table tr td').forEach(cell => cell.removeEventListener('click', onCellClicked))
+}
+
+document.querySelectorAll("#app table tr td").forEach(cell => cell.addEventListener('click', onCellClicked))
