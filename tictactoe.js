@@ -139,13 +139,15 @@ function checkWinningCondition(player) {
     gameoverFlag = true
     removeClickListeners()
 
-    return alert(`${player} player won!`)
+    alert(`${player} player won!`)
+    return reset()
   }
 
   if (getEmptyPositions().length === 0){
     gameoverFlag = true
 
-    return alert('Tied!')
+    alert('Tied!')
+    return reset()
   }
 
   // 等待電腦下完，玩家才能下棋
@@ -155,6 +157,11 @@ function checkWinningCondition(player) {
 // 將綁定在 td 上面的監聽器移除，取消點擊行為
 function removeClickListeners() {
   document.querySelectorAll('#app table tr td').forEach(cell => cell.removeEventListener('click', onCellClicked))
+}
+
+// 重新開始，清空畫面
+function reset() {
+  const cells = document.querySelectorAll('#app table tr td').forEach(cell => cell.innerHTML = '')
 }
 
 document.querySelectorAll("#app table tr td").forEach(cell => cell.addEventListener('click', onCellClicked))
