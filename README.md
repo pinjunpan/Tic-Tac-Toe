@@ -3,7 +3,7 @@
 
 ## Features
 - 設計井字遊戲，與電腦對決
-- 使用變數管理狀態(flag state)，控制流程
+- 使用變數管理狀態 (flag state)，控制流程
 - 判斷遊戲結果，並重新開始
 
 ## Getting Started
